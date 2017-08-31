@@ -1,0 +1,871 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+```{r}
+A <- 1:5
+B <- 11:15
+names(A) <- A
+names(B) <- B
+```
+
+```{r}
+A
+B
+```
+
+```{r}
+View(anscombe)
+lm(y3~x3, data = anscombe)
+```
+
+```{r}
+##-- now some "magic" to do the 4 regressions in a loop:
+ff <- y ~ x
+mods <- setNames(as.list(1:4), paste0("lm", 1:4))
+for(i in 1:4) {
+  ff[2:3] <- lapply(paste0(c("y","x"), i), as.name)
+  ## or   ff[[2]] <- as.name(paste0("y", i))
+  ##      ff[[3]] <- as.name(paste0("x", i))
+  mods[[i]] <- lmi <- lm(ff, data = anscombe)
+  print(anova(lmi))
+}
+```
+
+```{r}
+## See how close they are (numerically!)
+sapply(mods, coef)
+lapply(mods, function(fm) coef(summary(fm)))
+
+```
+
+```{r}
+## Now, do what you should have done in the first place: PLOTS
+op <- par(mfrow = c(2, 2), mar = 0.1+c(4,4,1,1), oma =  c(0, 0, 2, 0))
+for(i in 1:4) {
+  ff[2:3] <- lapply(paste0(c("y","x"), i), as.name)
+  plot(ff, data = anscombe, col = "red", pch = 21, bg = "orange", cex = 1.2,
+       xlim = c(3, 19), ylim = c(3, 13))
+  abline(mods[[i]], col = "blue")
+}
+mtext("Anscombe's 4 Regression data sets", outer = TRUE, cex = 1.5)
+par(op)
+```
+
+```{r}
+x = c(TRUE, FALSE, FALSE)
+typeof(x)  #logical (vector)
+mode(x)
+storage.mode(x)
+y = 1:10
+typeof(y)
+mode(y)
+storage.mode(y)
+```
+
+```{r}
+dim(y)
+length(y)
+```
+
+```{r}
+z= list(1, TRUE, 'safs') #trying to get a list
+typeof(z)
+class(z)
+z[3]
+length(z)
+dim(z)
+
+```
+
+```{r}
+quote(x+y)
+as.list(quote(x + y))
+```
+
+```{r}
+1e3L #create constant
+1L
+```
+
+```{r}
+cat(1+2)
+'+'(1, 2)
+```
+
+```{r}
+x <- options()
+x$prompt
+```
+
+```{r}
+match(NA, NaN)
+match(NA, NA)
+match(NaN, NaN)
+```
+
+```{r}
+x = array(1:8, c(2,4))
+x
+i=2
+j=3
+x[i]
+x[i, j]
+x[[i]]
+x[[i, j]]
+```
+
+```{r}
+rownames(x)=c("a","b")
+x
+x = as.data.frame(x)
+x
+x["a",]
+x[]
+```
+
+```{r}
+i <- matrix(1:4, 2, byrow = TRUE)
+i
+```
+
+```{r}
+i[2,]
+i[2, ,drop=FALSE] # keeping dimension 1 * n when selection a row
+dim(i[2,])
+dim(i[2, ,drop=FALSE])
+```
+
+```{r}
+# https://cran.r-project.org/doc/manuals/R-intro.pdf
+
+help.start()
+```
+
+```{r}
+x <- rnorm(10000)
+y <- rnorm(x)
+plot(x, y)
+hist(y)
+```
+
+```{r}
+ls()
+```
+
+```{r}
+rm(list=ls())
+ls()
+```
+
+```{r}
+x <- 1:20
+w <- 1 + sqrt(x)/2
+dummy <- data.frame(x=x, y= x + rnorm(x)*w)
+dummy 
+```
+
+```{r}
+# 4 Ordered and unordered factors
+state <- c("tas", "sa", "qld", "nsw", "nsw", "nt", "wa", "wa",
+"qld", "vic", "nsw", "vic", "qld", "qld", "sa", "tas",
+"sa", "nt", "wa", "vic", "qld", "nsw", "nsw", "wa",
+"sa", "act", "nsw", "vic", "vic", "act")
+statef <- factor(state)
+statef
+```
+
+```{r}
+levels(statef)
+```
+
+```{r}
+incomes <- c(60, 49, 40, 61, 64, 60, 59, 54, 62, 69, 70, 42, 56,
+61, 61, 61, 58, 51, 48, 65, 49, 49, 41, 48, 52, 46,
+59, 46, 58, 43)
+incmeans <- tapply(incomes, statef, mean)
+incmeans
+```
+
+```{r}
+# Arrays
+a <- array(1:30, dim=c(2, 5,3))
+a
+```
+
+```{r}
+x <- array(1:20, dim=c(4,5)) # Generate a 4 by 5 array.
+x
+i <- array(c(1:3,3:1), dim=c(3,2))
+i
+x[i] #get the 3 elements shown by i: (3, 1), (2, 2) and (1, 3)
+```
+
+```{r}
+help("<-")
+```
+
+```{r}
+# Back to http://zoonek2.free.fr/UNIX/48_R/02.html
+x <- rnorm(10)
+x
+sort(x)
+order(x)
+x[order(x)]
+```
+
+```{r}
+x <- sample(1:5, 10, replace=T)
+x
+x[order(x)]
+unique(x)
+```
+
+```{r}
+seq(0,10, length=11) == seq(0,10, by=1)
+```
+
+```{r}
+# Rep
+rep(0, 10)
+rep(1:5,3)
+rep(1:5, each=3)
+rep(1:5,2,each=3)
+```
+
+```{r}
+# Factor
+x <- factor( sample(c("Yes", "No", "Perhaps"), 5, replace=T) )
+x
+```
+
+```{r}
+# specify levels
+l <- c("Yes", "No", "Perhaps")
+x <- factor( sample(l, 5, replace=T), levels=l )
+x
+```
+
+```{r}
+table(x)
+```
+
+```{r}
+# gl: Generate Factor Levels
+gl(1,4)
+gl(2,4)
+gl(2,1,8)
+gl(2,1,8, labels=c(T,F))
+```
+
+```{r}
+x <- gl(2,4)
+x
+y <- gl(2,1,8)
+y
+interaction(x,y)
+data.frame(x,y, int=interaction(x,y))
+```
+
+```{r}
+# Cartesian product (toutes les possibilites)
+x <- c("A", "B", "C")
+y <- 1:2
+z <- c("a", "b")
+expand.grid(x,y,z)
+```
+
+```{r}
+x <- factor(c(3,4,5,1))
+as.numeric( levels(x))
+as.numeric( levels(x)[ x ] ) # proper way to convert from factor to numeric
+```
+
+```{r}
+# Data Frames
+n <- 10
+df <- data.frame( x=rnorm(n), y=sample(c(T,F),n,replace=T) )
+str(df)
+```
+
+```{r}
+summary(df)
+```
+
+```{r}
+names(df);cat(rownames(df))
+```
+
+```{r}
+# Merge
+merge(x, y)                 # INNER JOIN
+merge(x, y, all.x = TRUE)   # LEFT JOIN
+merge(x, y, all.y = TRUE)   # RIGHT JOIN
+merge(x, y, all   = TRUE)   # OUTER JOIN
+#merge(a, b, by=c("y", "z")) # specify what to merge on
+```
+
+```{r}
+# Regression
+data(cars) 
+#View(cars)
+
+# Regression
+lm.fit=lm( dist ~ speed, data=cars, na.action = na.exclude)
+lm.fit
+# Polynomial regression
+lm.fit3 = lm( dist ~ poly(speed,3), data=cars)
+
+#plot(lm.fit)
+plot(cars$speed, cars$dist)
+abline(lm.fit)
+```
+
+```{r}
+# Lists
+h <- list()
+h[["foo"]] <- 1
+h[["bar"]] <- c("a", "b", "c")
+h["bar"] == h[["bar"]] #h["bar"] is a list containing the vector
+```
+
+```{r}
+# Delete
+h[["bar"]] <- NULL
+```
+
+```{r}
+m <- matrix( c(1,2,3,4), nrow=2 )
+m
+```
+
+```{r}
+solve(m)
+x <- matrix( c(6,7), nrow=2 )
+solve(m, x)
+```
+
+```{r}
+?solve
+```
+
+```{r}
+n <- 1000
+x1 <- factor( sample(1:3, n, replace=T), levels=1:3 )
+x2 <- factor( sample(LETTERS[1:5], n, replace=T), levels=LETTERS[1:5] )
+x3 <- factor( sample(c(F,T),n,replace=T), levels=c(F,T) )
+d <- data.frame(x1,x2,x3)
+r <- table(d)
+```
+
+```{r}
+r
+```
+
+```{r}
+ftable(d) #easier reading
+```
+
+```{r}
+# contingency table into a data.frame
+n <- 100
+k <- 10
+x <- factor( sample(LETTERS[1:k], n, replace=T), levels=LETTERS[1:k] )
+x
+d <- table(x)
+x2 = factor( rep(names(d),d), levels=names(d) )
+x2
+```
+
+```{r}
+# apply
+options(digits=4)
+df <- data.frame(x=rnorm(20),y=rnorm(20),z=rnorm(20))
+apply(df,2,mean)
+rownames(df) <- LETTERS[1:20]
+apply(df, 1, mean)
+```
+
+```{r}
+gl(2,10,20)
+tapply(1:20, gl(2,10,20), sum) # tapply: 2nd argument used for grouping
+
+by(1:20, gl(2,10,20), sum)
+```
+
+```{r}
+x <- list(a=rnorm(10), b=runif(100), c=rgamma(50,1))
+sapply(x,sd) # sapply: apply FUN on each element of vector
+lapply(x,sd) # lapply: same but returns list
+
+```
+
+```{r}
+# Exercise: Let x be a boolean vector. Count the number of sequences ("runs") of zeros (for instance, in 00101001010110, there are 6 runs: 00 0 00 0 0 0). Count the number of sequences of 1. Counth the total number of sequences. Same question for a factor with more tham two levels.
+n <- 50
+x <- sample(0:1, n, replace=T, p=c(.2,.8))
+x
+diff(x, lag=1)
+
+
+```
+
+```{r}
+#Let r be the return of a financial asset. The clustered return is the accumulated return for a sequence of returns of the same sign. The trend number is the number of steps in such a sequence. The average return is their ratio. Compute these quantities.
+data(EuStockMarkets)
+x <- EuStockMarkets
+# We aren't interested in the spot prices, but in the returns
+# return[i] = ( price[i] - price[i-1] ) / price[i-1]
+y <- apply(x, 2, function (x) { diff(x)/x[-length(x)] })
+# We normalize the data
+z <- apply(y, 2, function (x) { (x-mean(x))/sd(x) })
+# A single time series
+r <- z[,1]
+# The runs
+f <- factor(cumsum(abs(diff(sign(r))))/2)
+r <- r[-1]
+accumulated.return <- tapply(r, f, sum)
+trend.number <- table(f)
+boxplot(abs(accumulated.return) ~ trend.number, col='pink',
+        main="Accumulated return")
+```
+
+```{r}
+# Strings
+print("Hello\n")
+
+cat("Hello\n") #use cat
+```
+
+```{r}
+paste("Hello", "World", "!", sep="") #concatenate
+paste("Hello ", " World", "!", sep="")
+```
+
+```{r}
+x <- 5
+paste("x=", x)
+cat("x=", x, "\n", sep="\n")
+```
+
+```{r}
+s <- c("Hello", " ", "World", "!")
+paste(s)
+paste(s, sep="")
+paste(s, collapse="")
+```
+
+```{r}
+paste(1:3, "Hello World!", sep=":")
+```
+
+```{r}
+nchar("Hello World!")
+```
+
+```{r}
+s <- "Hello World"
+substring(s, 4, 6)
+```
+
+```{r}
+s <- "foo-->bar-->baz"
+strsplit(s, "-->")
+```
+
+```{r}
+# Regex
+s <- "foo, bar, baz"
+strsplit(s, ", *")
+```
+
+```{r}
+s <- apply(matrix(LETTERS[1:24], nr=4), 2, paste, collapse="")
+s
+```
+
+```{r}
+grep("O", s)
+grep("O", s, value=T)
+```
+
+```{r}
+regexpr("o", "Hello")
+```
+
+```{r}
+regexpr("o", c("Hello", "World!"))
+```
+
+```{r}
+s <- "foo    bar baz"
+gsub(" ", "", s)   # Remove all the spaces
+gsub(" +", " ", s)  # Remove multiple spaces and replace them by single spaces
+
+```
+
+```{r}
+#The "sub" is similar to "gsub" but only replaces the first occurrence.
+s <- "foo bar baz"
+sub(" ", "", s)
+```
+
+```{r}
+# Dates
+as.Date("2005-05-15") #ISO 8601
+```
+
+```{r}
+as.Date("15/05/2005", format="%d/%m/%Y")
+as.Date("15/05/05", format="%d/%m/%y")
+cat("\n")
+as.Date("01/02/03", format="%y/%m/%d")
+as.Date("01/02/03", format="%y/%d/%m")
+
+```
+
+```{r}
+as.Date("01/02/03", format="%y/%m/%d") - as.Date("01/02/03", format="%y/%d/%m")
+```
+
+```{r}
+Sys.Date()
+format(Sys.Date(), format="%A, %d %B %Y")
+```
+
+```{r}
+seq(as.Date("2005-01-01"), as.Date("2005-07-01"), by="month")
+seq(as.Date("2005-01-01"), as.Date("2005-07-01"), by=31)
+```
+
+```{r}
+methods(class="Date")
+```
+
+```{r}
+as.POSIXlt("2005-05-15 21:45:17")
+```
+
+```{r}
+as.POSIXct(Sys.Date())
+```
+
+```{r}
+# Reading from dataframes
+# option 1
+  #d <- read.table("foo.txt")
+  #d$Date <- as.Date( as.character( d$Date ) )
+# option 2
+  #read.table("foo.txt", colClasses=c("Date", "character", rep(10, "numeric")))
+```
+
+```{r}
+
+```
+
+```{r}
+options(warn=1)
+```
+
+```{r}
+methods(plot)
+```
+
+```{r}
+# Import 
+
+# d <- read.table("foo.txt", header=T, sep=",")
+# d <- read.csv("txt.csv")
+# d <- read.csv2("txt.csv")  # semicolon-separated file, with a
+#                            # comma instead of the decimal point.
+# d <- read.delim("foo.txt") # Tab-delimited file
+# d <- read.fwf("txt.fwf")   # Fixed width fields
+```
+
+```{r}
+# Excel: this may be trickier: the missing values often appear as "#N/A!" and are mistaken for the start of a comment... You can try
+
+# d <- read.table("foo.csv", header = TRUE, sep = ",", 
+#                 na.strings = c("#N/A!", "NA", "@NA"), 
+#                 quote = '"',
+#                 comment.char = "")
+```
+
+```{r}
+#If your file only contains number, or only strings, it is wiser to store it in a matrix, not a data.frame. This is what the "scan" function does.
+# A numeric matrix
+  # x <- scan("foo.txt", sep=",")  # Gives a numeric vector
+  # n <- scan("foo.txt", sep=",", nlines=1)
+  # x <- matrix(x, nc=n)
+
+# A vector of strings
+  #x <- scan("foo.txt", what=character(0))
+
+```
+
+```{r}
+# Back tohttps://cran.r-project.org/doc/manuals/R-intro.pdf - Regression
+
+  # fm05 <- lm(y ~ x1 + x2 + x3 + x4 + x5, data = production)
+  # fm6 <- update(fm05, . ~ . + x6)
+  # smf6 <- update(fm6, sqrt(.) ~ .)
+```
+
+```{r}
+# Spine (from help)
+require(graphics)
+
+op <- par(mfrow = c(2,1), mgp = c(2,.8,0), mar = 0.1+c(3,3,3,1))
+n <- 9
+x <- 1:n
+y <- rnorm(n)
+plot(x, y, main = paste("spline[fun](.) through", n, "points"))
+lines(spline(x, y))
+lines(spline(x, y, n = 210), col = 2)
+```
+
+```{r}
+# NA handling - http://thomasleeper.com/Rcourse/Tutorials/NA.html
+g1 <- c(1, 2, NA, NA, NA, 6, 7)
+g2 <- na.omit(g1)
+g2
+```
+
+```{r}
+attributes(g2)$na.action
+```
+
+```{r}
+sum(g1)
+sum(g1, na.rm = TRUE)
+```
+
+```{r}
+# Cor -> can eliminate only pair-wise NAs ()
+x <- c(1, 2, 3, NA, 5, 7, 9)
+y <- c(3, 2, 4, 5, 1, 3, 4)
+z <- c(NA, 2, 3, 5, 4, 3, 4)
+m <- data.frame(x, y, z)
+m
+```
+
+```{r}
+cor(m)  # returns all NAs
+```
+
+```{r}
+cor(m, use = "complete.obs") # Default, all records with NA removed
+```
+
+```{r}
+cor(m, use = "pairwise.complete.obs") #kept more records for y~x and y~z
+```
+
+```{r}
+# Defaut for lm is also casewise deletion
+lm <- lm(y ~ x + z, data = m)
+summary(lm)
+```
+
+```{r}
+# Checking length of data used for regression
+length(m$y)
+length(lm$fitted)
+```
+
+```{r}
+# checking where missing data is
+is.na(m) # only useful for small examples
+# image
+image(is.na(m), main = "Missing Values", xlab = "Observation", ylab = "Variable", 
+    xaxt = "n", yaxt = "n", bty = "n")
+axis(1, seq(0, 1, length.out = nrow(m)), 1:nrow(m), col = "white")
+axis(2, c(0, 0.5, 1), names(m), col = "white", las = 2)
+```
+
+```{r}
+# to remove casewise:
+m2 <- na.omit(m) # use new variable to keep original dataframe
+m
+m2
+```
+
+```{r}
+# Mean imputation
+x2 <- x
+x2[is.na(x2)] <- mean(x2, na.rm = TRUE)
+x
+x2
+```
+
+```{r}
+# Random imputation - conserve mean and variance. 
+# How: sample rest of the values to fill NAs
+x3 <- x
+x3[is.na(x3)] <- sample(x3[!is.na(x3)], sum(is.na(x3)), TRUE)
+x
+x3
+```
+
+```{r}
+# Saving R data http://thomasleeper.com/Rcourse/Tutorials/savingdata.html 
+set.seed(1)
+mydf <- data.frame(x = rnorm(10), y = rnorm(10), z = rnorm(10))
+```
+
+```{r}
+save(mydf, file = "saveddf.RData") # can be loaded by double-clicking on saved file
+```
+
+```{r}
+unlink("saveddf.RData") # removing file
+```
+
+```{r}
+# dput to have a readable format (e.g. for stack overflow)
+dput(mydf)
+```
+
+```{r}
+dput(mydf, "saveddf.txt")
+```
+
+```{r}
+mydf2 <- dget("saveddf.txt")
+mydf2
+```
+
+```{r}
+mydf==mydf2 # due to rounding
+```
+
+```{r}
+unlink("saveddf.text")
+```
+
+```{r}
+# csv
+write.csv(mydf, file = "saveddf.csv")
+unlink("savedf.csv")
+```
+
+```{r}
+# Dataframe rearrangement
+
+set.seed(50)
+mydf <- data.frame(a = rep(1:2, each = 10), b = rep(1:4, times = 5), c = rnorm(20), 
+    d = rnorm(20), e = sample(1:20, 20, FALSE))
+head(mydf)
+```
+
+```{r}
+# manual order change
+
+head(mydf[, c("c", "d", "e", "a", "b")])
+# mydf <- mydf[, c(3, 4, 5, 1, 2)]
+```
+
+```{r}
+# using order
+order(mydf$e)
+head(mydf[order(mydf$e), ]) # ordering on any column
+```
+
+```{r}
+# Subset
+
+mydf[mydf$a == 1, ]
+mydf[mydf$a == 1 & mydf$b > 2, ]
+
+subset(mydf, a == 1 & b > 2)
+subset(mydf, select = c("a", "b"))
+subset(mydf, a == 1 & b > 2, select = c("c", "d")) # filter rows & columns
+
+```
+
+```{r}
+# Splitting 
+
+split(mydf, mydf$a) # -> splitting according to values of a
+```
+
+```{r}
+split(mydf, list(mydf$a, mydf$b))
+```
+
+```{r}
+lapply(split(mydf, mydf$a), summary) # perform summary on each of the dataframes
+```
+
+```{r}
+# sampling: splitting into training and test set
+# Option 1
+s <- sample(1:nrow(mydf), 5, F) #no replacement
+s
+```
+
+```{r}
+# use 5 rows as training set
+mydf[s,]
+```
+
+```{r}
+# test set
+mydf[-s, ]
+```
+
+```{r}
+# Option 2
+s2 <- rbinom(nrow(mydf), 1, 0.2) #won't necessarily give exactly 5 rows
+s2
+```
+
+```{r}
+mydf[s2,]
+mydf[-s2,]
+```
+
+```{r}
+# Recoding vectors
+library(car)
+```
+
+```{r}
+b <- 1:20
+#h <- recode(b, "1:5=1: 6:10=2; else=NA") # incredibly this creates an error
+e <- recode(b, "1:5=1; 6:10=2; else=NA")
+e
+f <- recode(b, "lo:5=1; 6:10=2; 11:15=3; 16:hi=4; else=NA")
+f
+```
+
+```{r}
+e <- recode(h, "NA=99")
+e
+```
+
+```{r}
+# Reconding on multiple variables
+i <- expand.grid(1:4, 1:2)
+i
+```
+
+```{r}
+interaction(i$Var1, i$Var2) # creates all possible combinations
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
